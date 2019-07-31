@@ -1,0 +1,253 @@
+<?xml version="1.0"?>
+
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	<h:head />
+	<h:body>
+		<h:form id="mainForm">
+			<p:commandLink action="#{mainView.openSettingsDialog()}"
+				update=":mainForm:settingsTable" value="Settings">
+				<h:outputText value="Settings" />
+			</p:commandLink>
+			<p:panel header="Registered devices" id="registeredDevices"
+				style="height: 200px;overflow: auto;display: block">
+				<p:dataTable var="d" value="#{mainView.devices}" emptyMessage=""
+					styleClass="borderless" style="width: 100%">
+					<p:column>
+						<h:outputLabel value="id: " class="formLabel bottomMargin" />
+						<h:outputText value="#{d.deviceId}" />
+					</p:column>
+					<p:column>
+						<h:outputLabel value="Hosted by: " class="formLabel bottomMargin" />
+						<h:outputText value="#{d.hostedBy}" />
+					</p:column>
+					<p:column>
+						<h:outputLabel value="Name: " class="formLabel bottomMargin" />
+						<h:outputText value="#{d.name}" />
+					</p:column>
+					<p:column>
+						<p:commandLink styleClass="ui-icon ui-icon-circle-zoomin"
+							action="#{mainView.openViewDeviceDetailsDialog()}"
+							style="float:left;margin-right:10px" id="viewDetailsLink"
+							update=":mainForm:viewDeviceDetailsTable">
+							<f:setPropertyActionListener value="#{d}"
+								target="#{mainView.selectedDevice}" />>
+						</p:commandLink>
+						<p:tooltip for="viewDetailsLink"
+							value="View details of this device" position="top" />
+						<p:commandLink styleClass="ui-icon ui-icon-search"
+							action="#{mainView.searchForSimilar()}"
+							id="searchSimilarDeviceLink" style="float:left;margin-right:10px"
+							update=":mainForm:searchMenu :mainForm:searchResults">
+							<f:setPropertyActionListener value="#{d}"
+								target="#{mainView.selectedDevice}" />>
+						</p:commandLink>
+						<p:tooltip for="searchSimilarDeviceLink"
+							value="Find similar devices" position="top" />
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+
+
+			<p:panel header="Search menu" id="searchMenu">	
+				Find devices that include in their name <b>(use only one of the
+					following)</b>:
+				<p:panelGrid columns="3" style="width:100%" layout="grid"
+					styleClass="ui-panelgrid-blank">
+					<h:outputLabel value="all of these words: "
+						class="formLabel bottomMargin" />
+					<p:inputText style="width: 250px;" autocomplete="off"
+						id="allWordsSearch" value="#{mainView.allWordsSearch}">
+						<p:ajax event="keyup" listener="#{mainView.handleKeyEvent}" />
+					</p:inputText>
+					<p:tooltip for="allWordsSearch"
+						value="Separate your words using comma" position="top" />
+
+					<h:outputLabel value="the specific word: "
+						class="formLabel bottomMargin" />
+					<p:inputText style="width: 250px;" autocomplete="off"
+						id="specificWord" value="#{mainView.specificWordSearch}" />
+					<p:tooltip for="specificWord"
+						value="Make sure to use only one word" position="top" />
+
+
+					<h:outputLabel value="any of these words: "
+						class="formLabel bottomMargin" />
+					<p:inputText style="width: 250px;" autocomplete="off" id="anyWord"
+						value="#{mainView.anyWordsSearch}" />
+					<p:tooltip for="anyWord" value="Separate your words using comma"
+						position="top" />
+
+
+					<h:outputLabel value="none of these words: "
+						class="formLabel bottomMargin" />
+					<p:inputText style="width: 250px;" autocomplete="off" id="noneWord"
+						value="#{mainView.noneWordsSearch}" />
+					<p:tooltip for="noneWord" value="Separate your words using comma"
+						position="top" />
+				</p:panelGrid>
+				<p:separator />
+				Reduced results based on:
+				<p:panelGrid columns="2" style="width:100%" layout="grid"
+					styleClass="ui-panelgrid-blank">
+					<h:outputLabel value="Device types: "
+						class="formLabel bottomMargin" />
+					<p:selectCheckboxMenu value="#{mainView.selectedDeviceTypes}"
+						label="Select device types" multiple="true" style="width: 300px"
+						panelStyle="width:250px">
+						<f:selectItems value="#{mainView.deviceTypes}" />
+					</p:selectCheckboxMenu>
+
+					<h:outputLabel value="Hosted by: " class="formLabel bottomMargin"
+						rendered="#{not empty mainView.hostedBy}" />
+					<p:selectCheckboxMenu value="#{mainView.selectedHostedBy}"
+						style="width: 300px" label="Select hosting platforms"
+						multiple="true" panelStyle="width:250px"
+						rendered="#{not empty mainView.hostedBy}">
+						<f:selectItems value="#{mainView.hostedBy}" />
+					</p:selectCheckboxMenu>
+
+					<h:outputLabel value="Hosts: " class="formLabel bottomMargin"
+						rendered="#{not empty mainView.host}" />
+					<p:selectCheckboxMenu value="#{mainView.selectedHost}"
+						style="width: 300px" label="Select sensor hosted" multiple="true"
+						panelStyle="width:250px" rendered="#{not empty mainView.host}">
+						<f:selectItems value="#{mainView.host}" />
+					</p:selectCheckboxMenu>
+
+					<h:outputLabel value="Observes: " class="formLabel bottomMargin"
+						rendered="#{not empty mainView.observes}" />
+					<p:selectCheckboxMenu value="#{mainView.selectedObserves}"
+						style="width: 300px" label="Select observation types"
+						multiple="true" panelStyle="width:250px"
+						rendered="#{not empty mainView.observes}">
+						<f:selectItems value="#{mainView.observes}" />
+					</p:selectCheckboxMenu>
+				</p:panelGrid>
+
+				<div align="center" style="margin-top: 20px">
+					<p:commandButton value="Clear all"
+						actionListener="#{mainView.clearAll}"
+						update=":mainForm:searchMenu :mainForm:searchResults" />
+					<p:commandButton value="Search" actionListener="#{mainView.search}"
+						update=":mainForm:searchResults" />
+				</div>
+			</p:panel>
+
+
+
+
+			<p:panel header="Search results" id="searchResults"
+				style="height: 220px;overflow: auto;display: block">
+				<p:dataTable var="d" value="#{mainView.devicesFromSearch}"
+					emptyMessage="-" styleClass="borderless" style="width: 100%">
+
+					<p:column>
+						<h:outputLabel value="id: " class="formLabel bottomMargin" />
+						<h:outputText value="#{d.deviceId}" />
+					</p:column>
+					<p:column>
+						<h:outputLabel value="Hosted by: " class="formLabel bottomMargin" />
+						<h:outputText value="#{d.hostedBy}" />
+					</p:column>
+					<p:column>
+						<h:outputLabel value="Name: " class="formLabel bottomMargin" />
+						<h:outputText value="#{d.name}" />
+					</p:column>
+
+				</p:dataTable>
+			</p:panel>
+
+			<!--DIALOG BOX USED FOR VIEWING DEVICE DETAILS -->
+			<p:dialog widgetVar="viewDeviceDetailsDialog"
+				id="viewDeviceDetailsDialog" width="600" modal="true"
+				header="View Device details" resizable="true" showEffect="clip"
+				hideEffect="fold" position="center,center" dynamic="true">
+				<p:panelGrid columns="1" style="width:100%" layout="grid"
+					id="viewDeviceDetailsTable">
+					<p:outputPanel>
+						<p:panelGrid columns="2" style="width:100%" layout="grid"
+							styleClass="ui-panelgrid-blank">
+							<h:outputLabel value="id:" style="font-weight:bold" />
+							<h:outputLabel value="#{mainView.selectedDevice.deviceId}" />
+
+							<h:outputLabel value="Hosted by: " class="formLabel bottomMargin" />
+							<h:outputText value="#{mainView.selectedDevice.hostedBy}" />
+
+							<h:outputLabel value="Name: " class="formLabel bottomMargin" />
+							<h:outputText value="#{mainView.selectedDevice.name}" />
+
+							<h:outputLabel value="Location: " class="formLabel bottomMargin"
+								rendered="#{not empty mainView.selectedDevice.location}" />
+							<h:outputText value="#{mainView.selectedDevice.location}"
+								rendered="#{not empty mainView.selectedDevice.location}" />
+
+							<h:outputLabel value="Detects: " class="formLabel bottomMargin"
+								rendered="#{not empty mainView.selectedDevice.detects}" />
+							<h:outputText value="#{mainView.selectedDevice.detects}"
+								rendered="#{not empty mainView.selectedDevice.detects}" />
+
+							<h:outputLabel value="Device types: "
+								rendered="#{not empty mainView.selectedDevice.deviceTypes}"
+								class="formLabel bottomMargin" />
+							<p:dataList value="#{mainView.selectedDevice.deviceTypes}"
+								var="dt"
+								rendered="#{not empty mainView.selectedDevice.deviceTypes}">
+        						#{dt}
+        					</p:dataList>
+
+							<h:outputLabel value="Hosts: " class="formLabel bottomMargin"
+								rendered="#{not empty mainView.selectedDevice.hosts}" />
+							<p:dataList value="#{mainView.selectedDevice.hosts}" var="dh"
+								rendered="#{not empty mainView.selectedDevice.hosts}">
+        						#{dh}
+    						</p:dataList>
+
+							<h:outputLabel value="Observes: " class="formLabel bottomMargin"
+								rendered="#{not empty mainView.selectedDevice.observes}" />
+							<p:dataList value="#{mainView.selectedDevice.observes}" var="dh"
+								rendered="#{not empty mainView.selectedDevice.observes}">
+        						#{dh}
+    						</p:dataList>
+						</p:panelGrid>
+					</p:outputPanel>
+				</p:panelGrid>
+				<div align="center" style="margin-top: 20px">
+					<p:commandButton value="Close"
+						oncomplete="viewDeviceDetailsDialog.hide();" />
+				</div>
+			</p:dialog>
+
+			<!--DIALOG BOX USED FOR SETTINGS -->
+			<p:dialog widgetVar="settingsDialog" id="settingsDialog" width="600"
+				modal="true" header="Settings" resizable="true" showEffect="clip"
+				hideEffect="fold" position="center,center" dynamic="true">
+				<p:panelGrid columns="1" style="width:100%" layout="grid"
+					id="settingsTable">
+					<p:outputPanel>
+						<p:panelGrid columns="2" style="width:100%" layout="grid"
+							styleClass="ui-panelgrid-blank">
+							<h:outputLabel value="AIoTES ip:" style="font-weight:bold" />
+							<p:inputText style="width: 250px;" autocomplete="off"
+								value="#{sessionController.ip}" />
+
+							<h:outputLabel value="AIoTES port: "
+								class="formLabel bottomMargin" />
+							<p:inputText style="width: 250px;" autocomplete="off"
+								value="#{sessionController.port}" />
+						</p:panelGrid>
+					</p:outputPanel>
+				</p:panelGrid>
+				<div align="center" style="margin-top: 20px">
+					<p:commandButton value="Save settings" ajax="false" action="#{mainView.loadData()}"
+						oncomplete="settingsDialog.hide();" />
+					<p:commandButton value="Close" oncomplete="settingsDialog.hide();" />
+				</div>
+			</p:dialog>
+		</h:form>
+	</h:body>
+</f:view>
