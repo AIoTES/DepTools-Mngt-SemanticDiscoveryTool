@@ -9,10 +9,6 @@
 	<h:head />
 	<h:body>
 		<h:form id="mainForm">
-			<p:commandLink action="#{mainView.openSettingsDialog()}"
-				update=":mainForm:settingsTable" value="Settings">
-				<h:outputText value="Settings" />
-			</p:commandLink>
 			<p:panel header="Registered devices" id="registeredDevices"
 				style="height: 200px;overflow: auto;display: block">
 				<p:dataTable var="d" value="#{mainView.devices}" emptyMessage=""
@@ -219,33 +215,6 @@
 				<div align="center" style="margin-top: 20px">
 					<p:commandButton value="Close"
 						oncomplete="viewDeviceDetailsDialog.hide();" />
-				</div>
-			</p:dialog>
-
-			<!--DIALOG BOX USED FOR SETTINGS -->
-			<p:dialog widgetVar="settingsDialog" id="settingsDialog" width="600"
-				modal="true" header="Settings" resizable="true" showEffect="clip"
-				hideEffect="fold" position="center,center" dynamic="true">
-				<p:panelGrid columns="1" style="width:100%" layout="grid"
-					id="settingsTable">
-					<p:outputPanel>
-						<p:panelGrid columns="2" style="width:100%" layout="grid"
-							styleClass="ui-panelgrid-blank">
-							<h:outputLabel value="AIoTES ip:" style="font-weight:bold" />
-							<p:inputText style="width: 250px;" autocomplete="off"
-								value="#{sessionController.ip}" />
-
-							<h:outputLabel value="AIoTES port: "
-								class="formLabel bottomMargin" />
-							<p:inputText style="width: 250px;" autocomplete="off"
-								value="#{sessionController.port}" />
-						</p:panelGrid>
-					</p:outputPanel>
-				</p:panelGrid>
-				<div align="center" style="margin-top: 20px">
-					<p:commandButton value="Save settings" ajax="false" action="#{mainView.loadData()}"
-						oncomplete="settingsDialog.hide();" />
-					<p:commandButton value="Close" oncomplete="settingsDialog.hide();" />
 				</div>
 			</p:dialog>
 		</h:form>

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 
 import org.activage.backend.HTTPClient;
@@ -21,16 +20,19 @@ import com.google.gson.JsonParser;
 @ManagedBean(name = "mainViewController")
 @ViewScoped
 public class MainViewController {
-	
-	@ManagedProperty(value = "#{sessionController}")
-	protected SessionController sessionController;
 		
 	private static final String PLATFORMS_URL = "mw2mw/platforms";
 	private static final String DEVICES_URL = "mw2mw/devices";
 
 	private String getBaseUrl(){
-		String baseUrl =  "http://" + sessionController.getIp() + ":" + sessionController.getPort() + "/api/";
+		//String baseUrl =  "http://localhost:8080/api/";
+		String baseUrl = System.getenv("AIOTES_API");
 		System.out.println("==> " + baseUrl);
+//		System.out.println("****> " + System.getenv("AIOTES_API"));
+//		Map<String, String> map = System.getenv();
+//		for (Entry<String, String> x : map.entrySet()){
+//			System.out.println(x.getKey() + " --> " + x.getValue());
+//		}
 		return baseUrl;
 	}
 	
@@ -101,13 +103,5 @@ public class MainViewController {
 			}		
 		}
 		return devices;
-	}
-
-	public SessionController getSessionController() {
-		return sessionController;
-	}
-
-	public void setSessionController(SessionController sessionController) {
-		this.sessionController = sessionController;
 	}
 }
