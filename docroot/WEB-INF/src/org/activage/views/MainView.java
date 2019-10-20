@@ -19,7 +19,7 @@ import org.primefaces.context.RequestContext;
 @ViewScoped
 public class MainView {
 	
-	private static final String CLIENT_ID = "myclient";
+	private static String CLIENT_ID = "myclient";
 	
 	private List<Platform> platforms = new ArrayList<Platform>();
 	private List<Device> devices = new ArrayList<Device>();
@@ -52,6 +52,9 @@ public class MainView {
 	
 	@PostConstruct
 	public void init() {
+		if (System.getenv("CLIENT_ID") != null && !System.getenv("CLIENT_ID").isEmpty()){
+			CLIENT_ID = System.getenv("CLIENT_ID");
+		}
 		loadData();
 	}
 	
@@ -62,6 +65,11 @@ public class MainView {
 		hostedBy = new ArrayList<String>();
 		host = new ArrayList<String>();
 		observes = new ArrayList<String>();
+		
+		try {
+			mainViewController.createClient(CLIENT_ID);
+		}
+		catch (Exception e){e.printStackTrace();}
 
 		try {
 			platforms = mainViewController.getPlatforms(CLIENT_ID);

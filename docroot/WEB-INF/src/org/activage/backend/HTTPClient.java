@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -44,15 +45,15 @@ public class HTTPClient {
 		return response.toString();
 	}
 	
-	public static String sendPost(String url, String json) throws IOException{
+	public static String sendPost(String url, String json, Map<String, String> headers) throws IOException{
 		System.out.println("---> " + json);
-		return sendContent(url, json, "POST");
+		return sendContent(url, json, "POST", headers);
 	}
 	
 	public static String sendPut(String url, String json) throws IOException{
 		System.out.println("PUT");
 		System.out.println(json);
-        return sendContent(url, json, "PUT");
+        return sendContent(url, json, "PUT", new HashMap<String, String>());
 	}
 	
 	public static String sendDelete(String url) throws IOException{
@@ -81,7 +82,7 @@ public class HTTPClient {
 		return response.toString();
 	}
 	
-	private static String sendContent(String url, String json, String requestMethod) throws IOException{
+	private static String sendContent(String url, String json, String requestMethod, Map<String, String> headers) throws IOException{
 		URL obj = new URL(url);
 		HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
 		conn.setDoOutput(true);
@@ -90,6 +91,10 @@ public class HTTPClient {
         conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
         conn.setRequestProperty("User-Agent", USER_AGENT);     
         conn.setRequestMethod(requestMethod);
+        
+		for (Entry<String, String> x : headers.entrySet()){
+			conn.setRequestProperty(x.getKey(), x.getValue());
+		}
         
         OutputStream os = conn.getOutputStream();
         os.write(json.getBytes("UTF-8"));

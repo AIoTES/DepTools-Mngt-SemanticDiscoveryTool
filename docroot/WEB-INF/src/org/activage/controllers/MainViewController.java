@@ -1,5 +1,6 @@
 package org.activage.controllers;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,10 +24,14 @@ public class MainViewController {
 		
 	private static final String PLATFORMS_URL = "mw2mw/platforms";
 	private static final String DEVICES_URL = "mw2mw/devices";
+	private static final String CLIENTS_URL = "mw2mw/clients";
 
 	private String getBaseUrl(){
-		//String baseUrl =  "http://localhost:8080/api/";
+//		String baseUrl =  "http://localhost:8080/api/";
 		String baseUrl = System.getenv("AIOTES_API");
+		if (baseUrl == null || baseUrl.isEmpty()){
+			baseUrl = "http://localhost:8080/api/";
+		}
 		System.out.println("==> " + baseUrl);
 //		System.out.println("****> " + System.getenv("AIOTES_API"));
 //		Map<String, String> map = System.getenv();
@@ -65,6 +70,18 @@ public class MainViewController {
 		}
 		return platforms;
 	}
+	
+	public void createClient(String clientID) throws IOException{
+		System.out.println("create client = " + clientID);
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("Client-ID", clientID);
+		JsonObject jsonObj = new JsonObject();
+		jsonObj.addProperty("clientId", clientID);
+		jsonObj.addProperty("responseFormat", "JSON_LD");
+		jsonObj.addProperty("responseDelivery", "CLIENT_PULL");
+		jsonObj.addProperty("receivingCapacity", 10);
+		HTTPClient.sendPost(getBaseUrl() + CLIENTS_URL, jsonObj.toString(), headers);
+	}
 
 	public List<Device> getDevices(String clientID, List<Platform> platforms) throws Exception{
 		List<Device> devices = new ArrayList<Device>();
@@ -99,7 +116,9 @@ public class MainViewController {
 					d.addHosts(s.getAsString());
 				}
 				System.out.println(d);
-				devices.add(d);
+				if (!devices.contains(d)){
+					devices.add(d);
+				}
 			}		
 		}
 		return devices;
