@@ -9,7 +9,7 @@ The application communicates through HTTP calls with the SIL. That means that be
 - Use an operating system with Java 7
 - Download and install the following Liferay Portal version: liferay-portal-tomcat-6.1
 - Download Liferay SDK and the provided source code. Import the project and create the corresponding WAR file
-- Copy the created WAR file in the deploy folder of Liferay Portal and initialise the Tomcat
+- Copy the created WAR file in the deploy folder of Liferay Portal and initialize the Tomcat
 
 ## Docker deployment
 
@@ -33,4 +33,4 @@ For instructions of how to use it, please check the Poliformat platform and the 
 
 ## License
 
-EUPL v1.2
+Copyright 2020 CERTH/ITI Visual Analytics Lab. This software is licensed under EUPL v1.2, check [LICENSE](./LICENSE) for more.
